@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jxydon Gallery</title>  <!-- Change to “Page2 Media” in page2/index.html -->
+  <style>
+    /* PAGE-SPECIFIC STYLING */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #001100, #003300);
+      color: #e0ffe0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin: 1.5em 0 0.75em;
+      font-size: 2.5rem;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .grid {
+      width: 90%;
+      max-width: 1000px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1em;
+      margin-bottom: 2em;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    .media-wrapper {
+      position: relative;
+      border-radius: 0.5em;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .media-wrapper > * {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      padding: 1em 0;
+      font-size: 0.9rem;
+      color: #99cc99;
+      opacity: 0.7;
+      text-align: center;
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Jxydon Gallery</h1>  <!-- Change text accordingly -->
+  <div class="grid" id="mediaGrid"></div>
+
+  <script>
+    const mediaGrid = document.getElementById('mediaGrid');
+    const assetPath = './assets/';
+    const mediaFiles = [
+      'image1.png',
+      'video1.mp4',
+      'photo.jpg',
+      'clip.webm',
+      // …your actual filenames here
+    ];
+
+    mediaFiles.forEach(file => {
+      const ext = file.split('.').pop().toLowerCase();
+      const fullPath = assetPath + file;
+      let wrapper = document.createElement('div');
+      wrapper.className = 'media-wrapper';
+
+      let el;
+      if (['mp4','webm'].includes(ext)) {
+        el = document.createElement('video');
+        el.src = fullPath;
+        el.controls = true;
+        el.addEventListener('loadedmetadata', () => {
+          wrapper.style.aspectRatio = `${el.videoWidth}/${el.videoHeight}`;
+        });
+      } else {
+        el = document.createElement('img');
+        el.src = fullPath;
+        el.alt = file;
+        el.addEventListener('load', () => {
+          wrapper.style.aspectRatio = `${el.naturalWidth}/${el.naturalHeight}`;
+        });
+      }
+
+      wrapper.appendChild(el);
+      mediaGrid.appendChild(wrapper);
+    });
+  </script>
+
+  <footer>© 2025 Your Name. All rights reserved.</footer>
+</body>
+</html>

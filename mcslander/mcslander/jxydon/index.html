@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jxydon Slander</title>
+  <link rel="icon" type="image/x-icon" href="../assets/jxydon-icon.png">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #001100, #003300);
+      color: #e0ffe0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin: 1.5em 0 0.75em;
+      font-size: 2.5rem;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .grid {
+      width: 90%;
+      max-width: 1000px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1em;
+      margin-bottom: 2em;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    .media-wrapper {
+      position: relative;
+      border-radius: 0.5em;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 4px 16px rgba(0, 255, 150, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .media-wrapper:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 255, 150, 0.3);
+    }
+
+    .media-wrapper > * {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #side-video-wrapper {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      z-index: 1;
+      width: 450px;
+      height: 748px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    #side-video {
+      width: 90%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: transparent;
+    }
+
+@media screen and (max-width: 768px) {
+  #side-video-wrapper {
+    position: relative;
+    top: unset;
+    left: unset;
+    transform: none;
+    width: 80vw;
+    height: auto;
+    aspect-ratio: 271 / 576;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    z-index: 0;
+  }
+
+  #side-video {
+    width: 90%;
+    height: auto;
+  }
+}
+
+    #music-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 255, 150, 0.15);
+      border: 2px solid #00ffc3;
+      color: #00ffc3;
+      font-size: 18px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 15px rgba(0, 255, 150, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    #music-toggle:hover {
+      background: rgba(0, 255, 150, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 150, 0.5);
+    }
+
+    #music-toggle.muted {
+      background: rgba(255, 0, 0, 0.15);
+      border-color: red;
+      color: red;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    }
+
+    .icon {
+      width: 67px;
+      height: 67px;
+      margin-right: 0.6em;
+      vertical-align: middle;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 1em 0;
+      font-size: 0.9rem;
+      color: #99cc99;
+      opacity: 0.7;
+      text-align: center;
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <h1>
+    <img src="../assets/jxydon-icon.png" alt="Jxydon Icon" class="icon" />
+    Jxydon Slander 2025
+  </h1>
+
+  <div class="grid" id="mediaGrid"></div>
+
+  <audio id="bgMusic" loop autoplay>
+    <source src="assets/theme.mp3" type="audio/mpeg" />
+  </audio>
+
+  <button id="music-toggle">🎵 Music On</button>
+
+  <div id="side-video-wrapper">
+    <video 
+      src="assets/yourfile.webm"
+      autoplay 
+      loop 
+      muted 
+      playsinline 
+      id="sideVideo">
+    </video>
+  </div>
+
+  <script>
+    const mediaGrid = document.getElementById('mediaGrid');
+    const assetPath = './assets/';
+    const mediaFiles = [
+      'video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4',
+      'video5.mp4', 'video6.mp4', 'video7.mp4', 'video8.mp4',
+      'video9.mp4', 'video10.mp4', 'video11.mp4', 'video12.mp4',
+      'video13.mp4', 'video14.mp4', 'video15.mp4', 'video16.mp4',
+      'video17.mp4', 'video18.mp4', 'video19.mp4', 'video20.mp4',
+      'video21.mp4', 'video22.mp4'
+    ];
+  
+    mediaFiles.forEach(file => {
+      const ext = file.split('.').pop().toLowerCase();
+      const fullPath = assetPath + file;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'media-wrapper';
+      wrapper.style.willChange = 'transform';
+    
+      let el;
+      if (['mp4', 'webm'].includes(ext)) {
+        el = document.createElement('video');
+        el.src = fullPath;
+        el.loop = true;
+        el.muted = true;
+        el.playsInline = true;
+        el.preload = 'metadata';
+        el.loading = 'lazy';
+        el.style.transform = 'translateZ(0)';
+      
+        el.addEventListener('loadedmetadata', () => {
+          wrapper.style.aspectRatio = `${el.videoWidth}/${el.videoHeight}`;
+        });
+      } else {
+        el = document.createElement('img');
+        el.src = fullPath;
+        el.alt = file;
+        el.loading = 'lazy';
+        el.style.transform = 'translateZ(0)';
+      
+        el.addEventListener('load', () => {
+          wrapper.style.aspectRatio = `${el.naturalWidth}/${el.naturalHeight}`;
+        });
+      }
+    
+      wrapper.appendChild(el);
+      mediaGrid.appendChild(wrapper);
+    });
+  
+    const MAX_PLAYING = 4;
+    let playingVideos = new Set();
+  
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        const isFullyVisible = entry.intersectionRatio === 1;
+      
+        if (isFullyVisible) {
+          if (!playingVideos.has(video) && playingVideos.size < MAX_PLAYING) {
+            video.play().then(() => {
+              playingVideos.add(video);
+            }).catch(() => {});
+          }
+        } else {
+          if (playingVideos.has(video)) {
+            video.pause();
+            playingVideos.delete(video);
+          }
+        }
+      });
+    }, {
+      threshold: 1.0
+    });
+  
+    const observeVideos = () => {
+      document.querySelectorAll('video').forEach(video => {
+        if (video.id !== 'sideVideo') {
+          observer.observe(video);
+        }
+      });
+    };
+  
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(observeVideos);
+    } else {
+      requestAnimationFrame(observeVideos);
+    }
+  
+    // MUSIC TOGGLE
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('music-toggle');
+  
+    music.volume = 1.0;
+    music.muted = false;
+  
+    function updateButton() {
+      musicBtn.textContent = music.muted ? "🔇 Music Off" : "🎵 Music On";
+      musicBtn.classList.toggle("muted", music.muted);
+    }
+  
+    music.play().catch(() => {
+      const unlockAudio = () => {
+        music.play().then(() => {
+          updateButton();
+          document.removeEventListener('click', unlockAudio);
+          document.removeEventListener('mousemove', unlockAudio);
+        });
+      };
+      document.addEventListener('click', unlockAudio);
+      document.addEventListener('mousemove', unlockAudio);
+    });
+  
+    musicBtn.addEventListener('click', () => {
+      music.muted = !music.muted;
+      updateButton();
+    });
+  
+    updateButton();
+  </script>
+
+  <footer>
+    Not to be taken seriously, this is completely satirical and for fun only. All media is fictional and not intended to represent real events or people.
+  </footer>
+</body>
+</html>

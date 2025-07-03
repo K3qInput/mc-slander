@@ -1,0 +1,100 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f0f0f, #1c1f3c);
+  color: #ffffff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+.container {
+  text-align: center;
+  padding: 2em;
+  animation: fadeInUp 1s ease-out;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 2em;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.nav-button {
+  display: block;
+  padding: 1em 2em;
+  font-size: 1.2rem;
+  background: linear-gradient(145deg, #2563eb, #1e40af);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.nav-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 0.6em;
+  vertical-align: middle;
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s ease forwards;
+}
+
+.fade-in.delay {
+  animation-delay: 0.5s;
+}
+
+.fade-in.delay-2 {
+  animation-delay: 1s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+footer {
+  margin-top: auto;
+  padding: 1em 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #cccccc;
+  opacity: 0.6;
+}
+
+.subtext {
+  font-size: 0.9rem; 
+  color: #999;     
+  margin: 0.25em 0 1em 0;  
+  text-align: center; 
+  font-weight: 400;   
+  opacity: 0;         
+  transform: translateY(10px); 
+  animation: fadeInUp 1s ease forwards;
+  animation-delay: 0.4s; 
+}
