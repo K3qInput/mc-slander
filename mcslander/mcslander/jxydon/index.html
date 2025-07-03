@@ -84,22 +84,16 @@
 
 @media screen and (max-width: 768px) {
   #side-video-wrapper {
-    position: relative;
-    top: unset;
-    left: unset;
-    transform: none;
-    width: 80vw;
-    height: auto;
-    aspect-ratio: 271 / 576;
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-    z-index: 0;
+    display: none;
   }
 
-  #side-video {
-    width: 90%;
-    height: auto;
+  .grid {
+    width: 95%;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  h1 {
+    font-size: 2rem;
   }
 }
 
@@ -161,6 +155,9 @@
   </style>
 </head>
 <body>
+  <div style="text-align: center; padding: 1em;">
+    <a href="../index.html" style="display: inline-block; padding: 0.5em 1em; background: rgba(0, 255, 150, 0.15); border: 2px solid #00ffc3; color: #00ffc3; text-decoration: none; border-radius: 8px; margin-bottom: 1em; transition: all 0.3s ease;">← Back to Main</a>
+  </div>
   <h1>
     <img src="../assets/jxydon-icon.png" alt="Jxydon Icon" class="icon" />
     Jxydon Slander 2025
@@ -234,15 +231,15 @@
       mediaGrid.appendChild(wrapper);
     });
   
-    const MAX_PLAYING = 4;
+    const MAX_PLAYING = 3;
     let playingVideos = new Set();
-  
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const video = entry.target;
-        const isFullyVisible = entry.intersectionRatio === 1;
-      
-        if (isFullyVisible) {
+        const isVisible = entry.intersectionRatio > 0.5;
+
+        if (isVisible) {
           if (!playingVideos.has(video) && playingVideos.size < MAX_PLAYING) {
             video.play().then(() => {
               playingVideos.add(video);
@@ -256,7 +253,8 @@
         }
       });
     }, {
-      threshold: 1.0
+      threshold: [0, 0.5, 1],
+      rootMargin: '50px'
     });
   
     const observeVideos = () => {

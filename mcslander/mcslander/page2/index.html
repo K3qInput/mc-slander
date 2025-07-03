@@ -1,11 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Jxydon Gallery</title>  <!-- Change to “Page2 Media” in page2/index.html -->
+  <title>Media Gallery</title>
   <style>
-    /* PAGE-SPECIFIC STYLING */
     body {
       margin: 0;
       padding: 0;
@@ -16,109 +16,182 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 2em 1em 1em;
+      width: 100%;
+      max-width: 1200px;
     }
 
     h1 {
-      margin: 1.5em 0 0.75em;
-      font-size: 2.5rem;
-      text-align: center;
+      font-size: clamp(2rem, 5vw, 2.5rem);
+      margin: 0 0 1em;
       text-shadow: 0 2px 6px rgba(0,0,0,0.7);
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 1s ease forwards;
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 0.5em 1em;
+      background: rgba(0, 255, 150, 0.15);
+      border: 2px solid #00ffc3;
+      color: #00ffc3;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 2em;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(0, 255, 150, 0.3);
+      transform: translateY(-2px);
     }
 
     .grid {
       width: 90%;
-      max-width: 1000px;
+      max-width: 1200px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1em;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5em;
       margin-bottom: 2em;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 1s ease forwards;
-      animation-delay: 0.4s;
+      padding: 0 1em;
     }
 
     .media-wrapper {
       position: relative;
-      border-radius: 0.5em;
+      border-radius: 12px;
       overflow: hidden;
       background: #000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 16px rgba(0, 255, 150, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .media-wrapper:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 255, 150, 0.3);
     }
 
     .media-wrapper > * {
       display: block;
       width: 100%;
       height: auto;
+      border-radius: 12px;
     }
 
-    /* Footer */
+    video {
+      background: #000;
+    }
+
+    img {
+      object-fit: cover;
+      min-height: 200px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      background: rgba(255,255,255,0.1);
+      color: #00ffc3;
+    }
+
     footer {
       margin-top: auto;
-      padding: 1em 0;
+      padding: 2em 1em;
       font-size: 0.9rem;
       color: #99cc99;
       opacity: 0.7;
       text-align: center;
-      animation: fadeInUp 1s ease forwards;
-      animation-delay: 0.8s;
+      line-height: 1.4;
     }
 
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1em;
+      }
+      
+      .header {
+        padding: 1em;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Jxydon Gallery</h1>  <!-- Change text accordingly -->
-  <div class="grid" id="mediaGrid"></div>
+  <div class="header">
+    <a href="../index.html" class="back-link">← Back to Main</a>
+    <h1>Media Gallery</h1>
+  </div>
+
+  <div class="grid" id="mediaGrid">
+    <div class="loading">Loading media...</div>
+  </div>
 
   <script>
     const mediaGrid = document.getElementById('mediaGrid');
     const assetPath = './assets/';
+    
+    // Sample media files - update with your actual files
     const mediaFiles = [
       'image1.png',
       'video1.mp4',
       'photo.jpg',
-      'clip.webm',
-      // …your actual filenames here
+      'clip.webm'
     ];
 
-    mediaFiles.forEach(file => {
+    // Clear loading message
+    mediaGrid.innerHTML = '';
+
+    mediaFiles.forEach((file, index) => {
       const ext = file.split('.').pop().toLowerCase();
       const fullPath = assetPath + file;
-      let wrapper = document.createElement('div');
+      const wrapper = document.createElement('div');
       wrapper.className = 'media-wrapper';
+      wrapper.style.opacity = '0';
+      wrapper.style.transform = 'translateY(20px)';
 
       let el;
-      if (['mp4','webm'].includes(ext)) {
+      if (['mp4', 'webm', 'mov'].includes(ext)) {
         el = document.createElement('video');
         el.src = fullPath;
         el.controls = true;
+        el.preload = 'metadata';
         el.addEventListener('loadedmetadata', () => {
           wrapper.style.aspectRatio = `${el.videoWidth}/${el.videoHeight}`;
         });
-      } else {
+      } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
         el = document.createElement('img');
         el.src = fullPath;
         el.alt = file;
+        el.loading = 'lazy';
         el.addEventListener('load', () => {
           wrapper.style.aspectRatio = `${el.naturalWidth}/${el.naturalHeight}`;
         });
       }
 
-      wrapper.appendChild(el);
-      mediaGrid.appendChild(wrapper);
+      if (el) {
+        wrapper.appendChild(el);
+        mediaGrid.appendChild(wrapper);
+
+        // Animate in with delay
+        setTimeout(() => {
+          wrapper.style.transition = 'all 0.6s ease';
+          wrapper.style.opacity = '1';
+          wrapper.style.transform = 'translateY(0)';
+        }, index * 100);
+      }
     });
+
+    // If no media files, show message
+    if (mediaFiles.length === 0) {
+      mediaGrid.innerHTML = '<div class="loading">No media files found. Add files to the assets folder.</div>';
+    }
   </script>
 
-  <footer>© 2025 Your Name. All rights reserved.</footer>
+  <footer>
+    © 2025 MC Slander. Not to be taken seriously, this is completely satirical and for fun only.
+  </footer>
 </body>
 </html>
