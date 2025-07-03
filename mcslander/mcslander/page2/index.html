@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Media Gallery</title>
+  <meta name="description" content="Media Gallery - MC Slander 2025">
+  <title>Media Gallery - MC Slander 2025</title>
+  <link rel="preload" href="../assets/jxydon-icon.png" as="image">
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #001100, #003300);
@@ -43,6 +45,16 @@
       font-size: clamp(2rem, 5vw, 2.5rem);
       margin: 0 0 1em;
       text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
     }
 
     .back-link {
@@ -62,6 +74,28 @@
       transform: translateY(-2px);
     }
 
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+      margin-bottom: 2em;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.5em 1em;
+      background: rgba(0, 255, 150, 0.1);
+      border: 1px solid #00ffc3;
+      color: #00ffc3;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 255, 150, 0.3);
+    }
+
     .grid {
       width: 90%;
       max-width: 1200px;
@@ -74,11 +108,14 @@
 
     .media-wrapper {
       position: relative;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       overflow: hidden;
       background: #000;
       box-shadow: 0 4px 16px rgba(0, 255, 150, 0.2);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
     }
 
     .media-wrapper:hover {
@@ -90,16 +127,34 @@
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
     }
 
     video {
       background: #000;
+      min-height: 200px;
     }
 
     img {
       object-fit: cover;
       min-height: 200px;
+    }
+
+    .media-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      color: white;
+      padding: 1em;
+      font-size: 0.9em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .media-wrapper:hover .media-info {
+      opacity: 1;
     }
 
     .loading {
@@ -109,6 +164,7 @@
       min-height: 200px;
       background: rgba(255,255,255,0.1);
       color: #00ffc3;
+      border-radius: var(--border-radius);
     }
 
     footer {
@@ -121,6 +177,13 @@
       line-height: 1.4;
     }
 
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 768px) {
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -130,13 +193,31 @@
       .header {
         padding: 1em;
       }
+
+      .filter-tabs {
+        gap: 0.5em;
+      }
+
+      .filter-btn {
+        padding: 0.4em 0.8em;
+        font-size: 0.9em;
+      }
     }
   </style>
 </head>
 <body>
   <div class="header">
     <a href="../index.html" class="back-link">← Back to Main</a>
-    <h1>Media Gallery</h1>
+    <h1>
+      <img src="../assets/jxydon-icon.png" alt="Jxydon Icon" class="icon" loading="lazy">
+      Media Gallery
+    </h1>
+    
+    <div class="filter-tabs">
+      <button class="filter-btn active" data-filter="all">All Media</button>
+      <button class="filter-btn" data-filter="video">Videos</button>
+      <button class="filter-btn" data-filter="image">Images</button>
+    </div>
   </div>
 
   <div class="grid" id="mediaGrid">
@@ -145,38 +226,67 @@
 
   <script>
     const mediaGrid = document.getElementById('mediaGrid');
-    const assetPath = './assets/';
+    const filterBtns = document.querySelectorAll('.filter-btn');
     
-    // Sample media files - update with your actual files
+    // Actual media files from your jxydon assets folder
     const mediaFiles = [
-      'image1.png',
-      'video1.mp4',
-      'photo.jpg',
-      'clip.webm'
+      { file: '../jxydon/assets/video1.mp4', type: 'video' },
+      { file: '../jxydon/assets/video2.mp4', type: 'video' },
+      { file: '../jxydon/assets/video3.mp4', type: 'video' },
+      { file: '../jxydon/assets/video4.mp4', type: 'video' },
+      { file: '../jxydon/assets/video5.mp4', type: 'video' },
+      { file: '../jxydon/assets/video6.mp4', type: 'video' },
+      { file: '../jxydon/assets/video7.mp4', type: 'video' },
+      { file: '../jxydon/assets/video8.mp4', type: 'video' },
+      { file: '../jxydon/assets/video9.mp4', type: 'video' },
+      { file: '../jxydon/assets/video10.mp4', type: 'video' },
+      { file: '../jxydon/assets/video11.mp4', type: 'video' },
+      { file: '../jxydon/assets/video12.mp4', type: 'video' },
+      { file: '../jxydon/assets/video13.mp4', type: 'video' },
+      { file: '../jxydon/assets/video14.mp4', type: 'video' },
+      { file: '../jxydon/assets/video15.mp4', type: 'video' },
+      { file: '../jxydon/assets/video16.mp4', type: 'video' },
+      { file: '../jxydon/assets/video17.mp4', type: 'video' },
+      { file: '../jxydon/assets/video18.mp4', type: 'video' },
+      { file: '../jxydon/assets/video19.mp4', type: 'video' },
+      { file: '../jxydon/assets/video20.mp4', type: 'video' },
+      { file: '../jxydon/assets/video21.mp4', type: 'video' },
+      { file: '../jxydon/assets/video22.mp4', type: 'video' },
+      { file: '../jxydon/assets/video20.mov', type: 'video' },
+      { file: '../jxydon/assets/video21.mov', type: 'video' },
+      { file: '../jxydon/assets/yourfile.webm', type: 'video' },
+      { file: '../assets/jxydon-icon.png', type: 'image' }
     ];
+
+    let allMediaElements = [];
+    let currentFilter = 'all';
 
     // Clear loading message
     mediaGrid.innerHTML = '';
 
-    mediaFiles.forEach((file, index) => {
+    function createMediaElement(mediaItem, index) {
+      const { file, type } = mediaItem;
       const ext = file.split('.').pop().toLowerCase();
-      const fullPath = assetPath + file;
       const wrapper = document.createElement('div');
       wrapper.className = 'media-wrapper';
-      wrapper.style.opacity = '0';
-      wrapper.style.transform = 'translateY(20px)';
+      wrapper.dataset.type = type;
+      wrapper.style.animationDelay = `${index * 0.1}s`;
 
       let el;
       if (['mp4', 'webm', 'mov'].includes(ext)) {
         el = document.createElement('video');
-        el.src = fullPath;
+        el.src = file;
         el.controls = true;
-        el.preload = 'none'; // Changed to 'none' for faster loading
+        el.preload = 'metadata';
         el.loading = 'lazy';
+        el.muted = true;
+        el.playsInline = true;
+        
         el.addEventListener('loadedmetadata', () => {
           wrapper.style.aspectRatio = `${el.videoWidth}/${el.videoHeight}`;
         });
-        // Add intersection observer for videos
+        
+        // Intersection observer for lazy loading
         const videoObserver = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -184,40 +294,82 @@
               videoObserver.unobserve(entry.target);
             }
           });
-        });
+        }, { rootMargin: '50px' });
         videoObserver.observe(el);
+        
       } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
         el = document.createElement('img');
-        el.src = fullPath;
-        el.alt = file;
+        el.src = file;
+        el.alt = file.split('/').pop();
         el.loading = 'lazy';
         el.decoding = 'async';
+        
         el.addEventListener('load', () => {
           wrapper.style.aspectRatio = `${el.naturalWidth}/${el.naturalHeight}`;
         });
       }
 
       if (el) {
+        // Add media info overlay
+        const info = document.createElement('div');
+        info.className = 'media-info';
+        info.textContent = file.split('/').pop();
+        
         wrapper.appendChild(el);
-        mediaGrid.appendChild(wrapper);
-
-        // Animate in with delay
-        setTimeout(() => {
-          wrapper.style.transition = 'all 0.6s ease';
-          wrapper.style.opacity = '1';
-          wrapper.style.transform = 'translateY(0)';
-        }, index * 100);
+        wrapper.appendChild(info);
+        allMediaElements.push(wrapper);
       }
+    }
+
+    // Create all media elements
+    mediaFiles.forEach(createMediaElement);
+
+    // Filter functionality
+    function filterMedia(filter) {
+      mediaGrid.innerHTML = '';
+      currentFilter = filter;
+      
+      const filteredElements = filter === 'all' 
+        ? allMediaElements 
+        : allMediaElements.filter(el => el.dataset.type === filter);
+      
+      if (filteredElements.length === 0) {
+        mediaGrid.innerHTML = '<div class="loading">No media files found for this filter.</div>';
+        return;
+      }
+      
+      filteredElements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.05}s`;
+        mediaGrid.appendChild(el);
+      });
+    }
+
+    // Filter button event listeners
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterMedia(btn.dataset.filter);
+      });
     });
 
-    // If no media files, show message
-    if (mediaFiles.length === 0) {
-      mediaGrid.innerHTML = '<div class="loading">No media files found. Add files to the assets folder.</div>';
-    }
+    // Initial load
+    filterMedia('all');
+
+    // Error handling for missing files
+    document.addEventListener('error', (e) => {
+      if (e.target.tagName === 'VIDEO' || e.target.tagName === 'IMG') {
+        const wrapper = e.target.closest('.media-wrapper');
+        if (wrapper) {
+          wrapper.style.display = 'none';
+        }
+      }
+    }, true);
   </script>
 
   <footer>
-    © 2025 MC Slander. Not to be taken seriously, this is completely satirical and for fun only.
+    © 2025 MC Slander. Not to be taken seriously, this is completely satirical and for fun only.<br>
+    <a href="mailto:alyssaxoxo987@gmail.com">Contact: alyssaxoxo987@gmail.com</a>
   </footer>
 </body>
 </html>
